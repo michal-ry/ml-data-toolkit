@@ -1,6 +1,6 @@
 import pandas as pd
 
-def clean_columns(df):
+def clean_columns(df, deal_dups = 'raise'):
     """
     Clean and standardize DataFrame column names.
 
@@ -36,7 +36,21 @@ def clean_columns(df):
         df.columns = df.columns.astype(str).str.lower().str.strip().str.replace(' ', '_', regex=False)
         if not df.columns.is_unique:
             dups = df.columns[df.columns.duplicated()].tolist()
-            raise ValueError (f"Duplicate column names detected after cleaning: {dups}.")
+            if deal_dups == 'raise':
+                raise ValueError (f"Duplicate column names detected after cleaning: {dups}.")
+            elif deal_dups == 'rename':
+                seen = {}
+                new_col = []
+                for col in df.columns:
+                    if col in seen:
+                        seen[col] += 1
+                        new_col.append(f'{col}_{seen[col]-1}')
+                    else:
+                        seen[col] = 1
+                        new_col.append(col)
+                df.columns = new_col
+            else:
+                raise ValueError ('Wrong input in deal_dups argument.')
         return df
     else:
         raise TypeError('Expected a pandas DataFrame with columns.')

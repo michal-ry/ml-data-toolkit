@@ -20,7 +20,7 @@ print(list(df.columns))
 print("\nOriginal preview:")
 print(df.head(3))
 
-df = clean_columns(df)
+df = clean_columns(df, deal_dups='rename')
 
 print("\nColumns after cleaning:")
 print(list(df.columns))
