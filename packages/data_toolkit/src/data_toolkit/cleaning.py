@@ -1,35 +1,46 @@
 import pandas as pd
 
-def clean_columns(df, deal_dups = 'raise'):
+def clean_columns(df, deal_dups='raise'):
+
     """
     Clean and standardize DataFrame column names.
 
-    This function converts all column names to strings, lowercases them,
-    strips leading and trailing whitespace, and replaces spaces with
-    underscores. After cleaning, it validates that column names are unique.
+    This function updates `df.columns` using these rules:
+    - convert column names to strings
+    - lowercase all names
+    - strip leading and trailing whitespace
+    - replace spaces with underscores
+
+    Duplicate names can appear after cleaning (e.g. " test" and "test " both become "test").
+    You can choose how to handle duplicates using `deal_dups`:
+
+    - deal_dups="raise" (default):
+      Raise a ValueError if duplicates exist after cleaning.
+    - deal_dups="rename":
+      Keep the first occurrence unchanged and rename later duplicates by adding suffixes:
+      "name", "name" -> "name", "name_1"
+      If "name_1" already exists, it will bump the number until it finds a free name
+      (e.g. "name", "name", "name_1" -> "name", "name_2", "name_1").
 
     Parameters
     ----------
-    df : pandas.DataFrame
-        Input DataFrame whose column names will be cleaned.
+    df : pandas.DataFrame (or DataFrame-like)
+        Input object. Must have a `.columns` attribute.
+    deal_dups : str, default "raise"
+        Duplicate handling mode. Allowed values: "raise", "rename".
 
     Returns
     -------
     pandas.DataFrame
-        A DataFrame with cleaned and standardized column names.
+        The same DataFrame with cleaned column names.
 
     Raises
     ------
     TypeError
-        If the input object does not have a `columns` attribute.
+        If `df` does not have a `.columns` attribute.
     ValueError
-        If duplicate column names are detected after cleaning.
-
-    Examples
-    --------
-    >>> df = clean_columns(df)
-    >>> df.columns
-    Index(['name', 'total_score', 'age'], dtype='object')
+        If duplicate column names exist and `deal_dups="raise"`,
+        or if `deal_dups` is not one of the allowed values.
     """
 
     if hasattr(df, 'columns'):
@@ -41,13 +52,21 @@ def clean_columns(df, deal_dups = 'raise'):
             elif deal_dups == 'rename':
                 seen = {}
                 new_col = []
+                unique_columns = set()
                 for col in df.columns:
                     if col in seen:
                         seen[col] += 1
-                        new_col.append(f'{col}_{seen[col]-1}')
+                        value = seen[col] - 1
+                        new_name = f'{col}_{value}'
+                        while new_name in df.columns or new_name in unique_columns:
+                            value += 1
+                            new_name = f'{col}_{value}'
+                        new_col.append(new_name)
+                        unique_columns.add(new_name)
                     else:
                         seen[col] = 1
                         new_col.append(col)
+                        unique_columns.add(col)
                 df.columns = new_col
             else:
                 raise ValueError ('Wrong input in deal_dups argument.')
