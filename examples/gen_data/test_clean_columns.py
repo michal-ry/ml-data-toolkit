@@ -40,24 +40,22 @@ def test_messy_no_duplicates():
     
     df = pd.DataFrame(data)
     
-    print('Preview of dataset before cleaning:')
-    print(df.head(3))
-
-    informations = report(df)
+    info_pre = report(df)
     
     print('\nReport before cleaning:')
-    print(informations['report_all'])
+    print(info_pre['report_all'])
     
     df = clean_columns(df)
-    print('\nColumn names changed successfully!')
 
-    print('\nPreview of dataset after cleaning:')
-    print(df.head(3))
+    info_after = report(df)
 
-    informations = report(df)
+    assert info_after['duplicates'] == 0
+    assert info_after['all_strings']
+    assert info_after['columns_nr'] == info_pre['columns_nr']
+
     print('\nReport after cleaning:')
-    print(informations['report_all'])
+    print(info_after['report_all'])
     
- 
+
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
