@@ -24,7 +24,6 @@ All strings: {all_strings}
 
     return report_dict
 
-
 def test_messy_no_duplicates():
 
     data = {
@@ -50,7 +49,6 @@ def test_messy_no_duplicates():
         assert info_after['duplicates'] == 0
         assert info_after['all_strings']
         assert info_after['columns_nr'] == info_pre['columns_nr']
-        print('clean_columns passed.')
 
     except AssertionError:
         print('Report before cleaning:')
@@ -59,8 +57,40 @@ def test_messy_no_duplicates():
         print(info_after['report_all'])
         raise
 
-def duplicates_with_raise():
-    pass
+def test_simple_duplicates_rename():
+
+    data = {
+    "Name": ["Alice", "Bob", "Charlie"],
+    " name ": ["A", "B", "C"],   # becomes "name"
+    "AGE": [25, 30, 35],
+    "City": ["NY", "LA", "SF"]
+}
+    
+    expected_columns = ["name", "name_1", "age", "city"]
+
+    df = pd.DataFrame(data)
+
+    info_pre = report(df)
+    
+    df = clean_columns(df, deal_dups='rename')
+
+    info_after = report(df)
+
+    try:
+        assert info_after['duplicates'] == 0
+        assert info_after['all_strings']
+        assert info_after['columns_nr'] == info_pre['columns_nr']
+        assert df.columns.to_list() == expected_columns
+
+    except AssertionError:
+        print('Report before cleaning:')
+        print(info_pre['report_all'])
+        print('\nReport after cleaning:')
+        print(info_after['report_all'])
+        print(f'Expected column names: {expected_columns}')
+        raise
 
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
+# Test 2: simple duplicates
+test_simple_duplicates_rename()
