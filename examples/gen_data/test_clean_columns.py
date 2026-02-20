@@ -61,12 +61,45 @@ def test_simple_duplicates_rename():
 
     data = {
     "Name": ["Alice", "Bob", "Charlie"],
-    " name ": ["A", "B", "C"],   # becomes "name"
+    " name ": ["A", "B", "C"],
     "AGE": [25, 30, 35],
     "City": ["NY", "LA", "SF"]
 }
     
-    expected_columns = ["name", "name_1", "age", "city"]
+    expected_columns = ['name', 'name_1', 'age', 'city']
+
+    df = pd.DataFrame(data)
+
+    info_pre = report(df)
+    
+    df = clean_columns(df, deal_dups='rename')
+
+    info_after = report(df)
+
+    try:
+        assert info_after['duplicates'] == 0
+        assert info_after['all_strings']
+        assert info_after['columns_nr'] == info_pre['columns_nr']
+        assert df.columns.to_list() == expected_columns
+
+    except AssertionError:
+        print('Report before cleaning:')
+        print(info_pre['report_all'])
+        print('\nReport after cleaning:')
+        print(info_after['report_all'])
+        print(f'Expected column names: {expected_columns}')
+        raise
+
+def test_duplicate_collision_rename():
+    
+    data = {
+    "Name": ["Alice", "Bob", "Charlie"],
+    " name ": ["A", "B", "C"],
+    "name_1": [1, 2, 3],
+    "NAME": ["X", "Y", "Z"]
+}
+    
+    expected_columns = ['name', 'name_2', 'name_1', 'name_3']
 
     df = pd.DataFrame(data)
 
@@ -94,3 +127,5 @@ def test_simple_duplicates_rename():
 test_messy_no_duplicates()
 # Test 2: simple duplicates
 test_simple_duplicates_rename()
+# Test 3: duplicate with collision
+test_duplicate_collision_rename()
