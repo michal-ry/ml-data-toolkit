@@ -42,20 +42,25 @@ def test_messy_no_duplicates():
     
     info_pre = report(df)
     
-    print('\nReport before cleaning:')
-    print(info_pre['report_all'])
-    
     df = clean_columns(df)
 
     info_after = report(df)
 
-    assert info_after['duplicates'] == 0
-    assert info_after['all_strings']
-    assert info_after['columns_nr'] == info_pre['columns_nr']
+    try:
+        assert info_after['duplicates'] == 0
+        assert info_after['all_strings']
+        assert info_after['columns_nr'] == info_pre['columns_nr']
+        print('clean_columns passed.')
 
-    print('\nReport after cleaning:')
-    print(info_after['report_all'])
-    
+    except AssertionError:
+        print('Report before cleaning:')
+        print(info_pre['report_all'])
+        print('\nReport after cleaning:')
+        print(info_after['report_all'])
+        raise
+
+def duplicates_with_raise():
+    pass
 
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
