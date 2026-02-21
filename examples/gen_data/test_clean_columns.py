@@ -178,15 +178,33 @@ def test_non_df_input_error():
     else:
         raise AssertionError('TypeError was not raised for non-DataFrame input')
 
+def test_wrong_deal_dups_argument():
 
+    data = {
+    "Name": ["Alice", "Bob", "Charlie"],
+    " name ": ["A", "B", "C"],
+    "AGE": [25, 30, 35],
+    "City": ["NY", "LA", "SF"]
+}
+    
+    df = pd.DataFrame(data)
+
+    try:
+        clean_columns(df, deal_dups='keep')
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('ValueError was not raised for wrong deal_dups argument')
 
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
 # Test 2: simple duplicates
 test_simple_duplicates_rename()
-# Test 3: duplicate with collision
+# Test 3: duplicates with collision
 test_duplicate_collision_rename()
 # Test 4: numeric, non-string values
 test_non_string_column_names()
-# Test 5: Error: non-DataFrame input
+# Test 5: TypeError: non-DataFrame input
 test_non_df_input_error()
+# Test 6: ValueError: wrong deal_dups argument
+test_wrong_deal_dups_argument()
