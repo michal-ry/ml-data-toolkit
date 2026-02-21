@@ -178,7 +178,7 @@ def test_non_df_input_error():
     else:
         raise AssertionError('TypeError was not raised for non-DataFrame input')
 
-def test_wrong_deal_dups_argument():
+def test_invalid_deal_dups_argument():
 
     data = {
     "Name": ["Alice", "Bob", "Charlie"],
@@ -194,7 +194,25 @@ def test_wrong_deal_dups_argument():
     except ValueError:
         pass
     else:
-        raise AssertionError('ValueError was not raised for wrong deal_dups argument')
+        raise AssertionError('ValueError was not raised for invalid deal_dups argument')
+
+def test_duplicates_with_raise_argument():
+
+    data = {
+    "Name": ["Alice", "Bob", "Charlie"],
+    " name ": ["A", "B", "C"],
+    "AGE": [25, 30, 35],
+    "City": ["NY", "LA", "SF"]
+}
+    
+    df = pd.DataFrame(data)
+
+    try:
+        clean_columns(df)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('ValueError was not raised for duplicate names.')
 
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
@@ -206,5 +224,7 @@ test_duplicate_collision_rename()
 test_non_string_column_names()
 # Test 5: TypeError: non-DataFrame input
 test_non_df_input_error()
-# Test 6: ValueError: wrong deal_dups argument
-test_wrong_deal_dups_argument()
+# Test 6: ValueError: invalid deal_dups argument
+test_invalid_deal_dups_argument()
+# Test 7: ValueError: duplicates detection
+test_duplicates_with_raise_argument()
