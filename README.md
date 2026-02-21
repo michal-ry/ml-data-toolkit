@@ -6,6 +6,10 @@ Reusable Python toolkit for data preprocessing, analysis, and machine learning w
 
 This project is currently under active development.
 
+## ✅ Current Implementation
+
+- Column name normalization and validation function implemented with input validation and test coverage
+
 ## 📦 Planned Modules
 
 The following modules represent current ideas and may evolve over time.
