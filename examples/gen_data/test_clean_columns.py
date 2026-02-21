@@ -123,9 +123,44 @@ def test_duplicate_collision_rename():
         print(f'Expected column names: {expected_columns}')
         raise
 
+def test_numeric_non_string_rename():
+
+    data = {
+    123: [1, 2, 3],
+    45.6: [4, 5, 6],
+    True: ["a", "b", "c"],
+    "Name": ["A", "B", "C"]
+}
+    
+    expected_columns = ["123", "45.6", "true", "name"]
+    
+    df = pd.DataFrame(data)
+
+    info_pre = report(df)
+    
+    df = clean_columns(df, deal_dups='rename')
+
+    info_after = report(df)
+
+    try:
+        assert info_after['all_strings']
+        assert info_after['duplicates'] == 0
+        assert info_after['columns_nr'] == info_pre['columns_nr']
+        assert df.columns.to_list() == expected_columns
+
+    except AssertionError:
+        print('Report before cleaning:')
+        print(info_pre['report_all'])
+        print('\nReport after cleaning:')
+        print(info_after['report_all'])
+        raise
+
+
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
 # Test 2: simple duplicates
 test_simple_duplicates_rename()
 # Test 3: duplicate with collision
 test_duplicate_collision_rename()
+# Test 4: numeric, non-string values
+test_numeric_non_string_rename()
