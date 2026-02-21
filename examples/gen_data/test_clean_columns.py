@@ -167,6 +167,18 @@ def test_non_string_column_names():
         print(info_after['report_all'])
         raise
 
+def test_non_df_input_error():
+
+    data = [1, 2, 3]
+
+    try:
+        clean_columns(data)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError('TypeError was not raised for non-DataFrame input')
+
+
 
 # Test 1: messy names, no duplicates
 test_messy_no_duplicates()
@@ -176,3 +188,5 @@ test_simple_duplicates_rename()
 test_duplicate_collision_rename()
 # Test 4: numeric, non-string values
 test_non_string_column_names()
+# Test 5: Error: non-DataFrame input
+test_non_df_input_error()
