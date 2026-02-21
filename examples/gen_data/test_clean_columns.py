@@ -37,6 +37,17 @@ def test_messy_no_duplicates():
     "  multiple   spaces  ": [10, 20, 30]
 }
     
+    expected_columns = [
+    'name',
+    'age',
+    'total_score',
+    'city__name',
+    '123',
+    'emailaddress',
+    'already_clean',
+    'multiple___spaces'
+]
+
     df = pd.DataFrame(data)
     
     info_pre = report(df)
@@ -49,6 +60,7 @@ def test_messy_no_duplicates():
         assert info_after['duplicates'] == 0
         assert info_after['all_strings']
         assert info_after['columns_nr'] == info_pre['columns_nr']
+        assert df.columns.to_list() == expected_columns
 
     except AssertionError:
         print('Report before cleaning:')
@@ -123,7 +135,7 @@ def test_duplicate_collision_rename():
         print(f'Expected column names: {expected_columns}')
         raise
 
-def test_numeric_non_string_rename():
+def test_non_string_column_names():
 
     data = {
     123: [1, 2, 3],
@@ -163,4 +175,4 @@ test_simple_duplicates_rename()
 # Test 3: duplicate with collision
 test_duplicate_collision_rename()
 # Test 4: numeric, non-string values
-test_numeric_non_string_rename()
+test_non_string_column_names()
