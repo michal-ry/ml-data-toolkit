@@ -3,31 +3,41 @@ import pandas as pd
 def clean_columns(df, deal_dups='raise'):
 
     """
-    Clean and standardize DataFrame column names.
+    Clean and standardize pandas DataFrame column names.
 
-    This function updates `df.columns` using these rules:
+    This function modifies `df.columns` using the following rules:
     - convert column names to strings
-    - lowercase all names
-    - strip leading and trailing whitespace
+    - convert all names to lowercase
+    - remove leading and trailing whitespace
     - replace spaces with underscores
 
-    Duplicate names can appear after cleaning (e.g. " test" and "test " both become "test").
-    You can choose how to handle duplicates using `deal_dups`:
+    Duplicate names may appear after cleaning
+    (e.g. " test" and "test " both become "test").
+
+    You can control how duplicates are handled using `deal_dups`:
 
     - deal_dups="raise" (default):
-      Raise a ValueError if duplicates exist after cleaning.
+    Raise a ValueError if duplicate column names are detected.
+
     - deal_dups="rename":
-      Keep the first occurrence unchanged and rename later duplicates by adding suffixes:
-      "name", "name" -> "name", "name_1"
-      If "name_1" already exists, it will bump the number until it finds a free name
-      (e.g. "name", "name", "name_1" -> "name", "name_2", "name_1").
+    Keep the first occurrence unchanged and rename later duplicates
+    by adding numeric suffixes:
+        "name", "name" -> "name", "name_1"
+
+    If a suffix already exists, the function will increment the number
+    until it finds an available name:
+        "name", "name", "name_1" -> "name", "name_2", "name_1"
 
     Parameters
     ----------
-    df : pandas.DataFrame (or DataFrame-like)
-        Input object. Must have a `.columns` attribute.
+    df : pandas.DataFrame
+        Input DataFrame. Must be a pandas DataFrame instance.
+
     deal_dups : str, default "raise"
-        Duplicate handling mode. Allowed values: "raise", "rename".
+        How to handle duplicate column names.
+        Allowed values:
+            - "raise"
+            - "rename"
 
     Returns
     -------
@@ -37,39 +47,46 @@ def clean_columns(df, deal_dups='raise'):
     Raises
     ------
     TypeError
-        If `df` does not have a `.columns` attribute.
+        If `df` is not a pandas DataFrame.
+
     ValueError
         If duplicate column names exist and `deal_dups="raise"`,
         or if `deal_dups` is not one of the allowed values.
     """
 
-    if hasattr(df, 'columns'):
-        df.columns = df.columns.astype(str).str.lower().str.strip().str.replace(' ', '_', regex=False)
-        if not df.columns.is_unique:
-            dups = df.columns[df.columns.duplicated()].tolist()
-            if deal_dups == 'raise':
-                raise ValueError (f"Duplicate column names detected after cleaning: {dups}.")
-            elif deal_dups == 'rename':
-                seen = {}
-                new_col = []
-                unique_columns = set()
-                for col in df.columns:
-                    if col in seen:
-                        seen[col] += 1
-                        value = seen[col] - 1
+    if not isinstance(df, pd.DataFrame):
+        got_type = type(df)
+        raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
+    
+    df.columns = df.columns.astype(str).str.lower().str.strip().str.replace(' ', '_', regex=False)
+    if not df.columns.is_unique:
+        dups = df.columns[df.columns.duplicated()].tolist()
+        if deal_dups == 'raise':
+            raise ValueError (f"Duplicate column names detected after cleaning: {dups}.")
+        elif deal_dups == 'rename':
+            seen = {}
+            new_col = []
+            unique_columns = set()
+            for col in df.columns:
+                if col in seen:
+                    seen[col] += 1
+                    value = seen[col] - 1
+                    new_name = f'{col}_{value}'
+                    while new_name in df.columns or new_name in unique_columns:
+                        value += 1
                         new_name = f'{col}_{value}'
-                        while new_name in df.columns or new_name in unique_columns:
-                            value += 1
-                            new_name = f'{col}_{value}'
-                        new_col.append(new_name)
-                        unique_columns.add(new_name)
-                    else:
-                        seen[col] = 1
-                        new_col.append(col)
-                        unique_columns.add(col)
-                df.columns = new_col
-            else:
-                raise ValueError ('Wrong input in deal_dups argument.')
-        return df
-    else:
-        raise TypeError('Expected a pandas DataFrame with columns.')
+                    new_col.append(new_name)
+                    unique_columns.add(new_name)
+                else:
+                    seen[col] = 1
+                    new_col.append(col)
+                    unique_columns.add(col)
+            df.columns = new_col
+        else:
+            raise ValueError ('Wrong input in deal_dups argument.')
+        
+    return df
+        
+    
+def handle_duplicates(df):
+    pass
