@@ -55,7 +55,7 @@ def clean_columns(df, deal_dups='raise'):
     """
 
     if not isinstance(df, pd.DataFrame):
-        got_type = type(df)
+        got_type = type(df).__name__
         raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
     
     df.columns = df.columns.astype(str).str.lower().str.strip().str.replace(' ', '_', regex=False)
@@ -91,5 +91,5 @@ def clean_columns(df, deal_dups='raise'):
 def handle_duplicates(df):
     
     if not isinstance(df, pd.DataFrame):
-        got_type = type(df)
+        got_type = type(df).__name__
         raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
