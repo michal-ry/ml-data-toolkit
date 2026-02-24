@@ -89,4 +89,7 @@ def clean_columns(df, deal_dups='raise'):
         
     
 def handle_duplicates(df):
-    pass
+    
+    if not isinstance(df, pd.DataFrame):
+        got_type = type(df)
+        raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
