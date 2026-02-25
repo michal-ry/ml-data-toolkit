@@ -88,8 +88,17 @@ def clean_columns(df, deal_dups='raise'):
     return df
         
     
-def handle_duplicates(df):
+def handle_duplicates(df, action='raise'):
     
     if not isinstance(df, pd.DataFrame):
         got_type = type(df).__name__
         raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
+    
+    duplicates_total = df.duplicated().sum()
+
+    if action == 'raise':
+        if duplicates_total:
+            raise ValueError(f'Duplicates detected. Total number of duplicates: {duplicates_total}')
+        else:
+            return df
+    
