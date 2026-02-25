@@ -208,23 +208,23 @@ def test_duplicates_with_raise_argument():
     df = pd.DataFrame(data)
 
     try:
-        clean_columns(df)
+        clean_columns(df, deal_dups='raise')
     except ValueError:
         pass
     else:
         raise AssertionError('ValueError was not raised for duplicate names.')
 
-# Test 1: messy names, no duplicates
+# Test 1: messy column names, no duplicates
 test_messy_no_duplicates()
-# Test 2: simple duplicates
+# Test 2: simple duplicates columns - rename mode
 test_simple_duplicates_rename()
-# Test 3: duplicates with collision
+# Test 3: duplicates with collision - rename mode
 test_duplicate_collision_rename()
-# Test 4: numeric, non-string values
+# Test 4: non-string values
 test_non_string_column_names()
 # Test 5: TypeError: non-DataFrame input
 test_non_df_input_error()
 # Test 6: ValueError: invalid deal_dups argument
 test_invalid_deal_dups_argument()
-# Test 7: ValueError: duplicates detection
+# Test 7: ValueError: duplicates detection - raise mode
 test_duplicates_with_raise_argument()
