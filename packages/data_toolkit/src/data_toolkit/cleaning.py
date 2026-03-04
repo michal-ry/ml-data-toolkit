@@ -90,14 +90,14 @@ def clean_columns(df, deal_dups='raise'):
     
 def handle_duplicates(df, subset=None, action='raise'):
 
-    SUPPORTED_ACTION = ['raise', 'report', 'clean']
+    SUPPORTED_ACTIONS = ['raise', 'report', 'clean']
     
     if not isinstance(df, pd.DataFrame):
         got_type = type(df).__name__
         raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
     
-    if action not in SUPPORTED_ACTION:
-        raise ValueError(f"Action not supported. Supported actions: {SUPPORTED_ACTION}")
+    if action not in SUPPORTED_ACTIONS:
+        raise ValueError(f"Action not supported. Supported actions: {SUPPORTED_ACTIONS}")
 
     df_mask = df.duplicated(subset=subset, keep='first')
     duplicates_total = df_mask.sum()
@@ -105,16 +105,18 @@ def handle_duplicates(df, subset=None, action='raise'):
     if action == 'raise':
         if duplicates_total:
             raise ValueError(f'Duplicates detected. Total number of duplicates: {duplicates_total}')
+        
     elif action == 'report':
 
         total_pct = duplicates_total / df.shape[0] * 100
 
         report = {
             'total_num': duplicates_total,
-            'total_pct': total_pct
+            'total_pct': round(total_pct, 2)
         }
 
         return report
+    
     else:
         df_clean = df.drop_duplicates(subset=subset, keep='first')
         return df_clean
