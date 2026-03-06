@@ -108,11 +108,12 @@ def handle_duplicates(df, subset=None, action='raise'):
         
     elif action == 'report':
 
-        total_pct = duplicates_total / df.shape[0] * 100
+        if duplicates_total:
+            total_pct = duplicates_total / df.shape[0] * 100
 
         report = {
             'total_num': duplicates_total,
-            'total_pct': round(total_pct, 2)
+            'total_pct': round(total_pct, 2) if duplicates_total else 0.0
         }
 
         return report
