@@ -90,6 +90,69 @@ def clean_columns(df, deal_dups='raise'):
     
 def handle_duplicates(df, subset=None, action='raise'):
 
+    """
+    Detect, report, or remove duplicate rows in a pandas DataFrame.
+
+    This function checks duplicates in the whole DataFrame or in a selected subset
+    of columns. Duplicate detection uses `keep='first'`, which means the first
+    occurrence is treated as unique and only later duplicates are counted.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame to analyze.
+
+    subset : None, str, or list, default None
+        Columns used to identify duplicates.
+
+        - None: check duplicates using all columns
+        - str: check duplicates using one column
+        - list: check duplicates using multiple columns
+
+    action : {'raise', 'report', 'clean'}, default 'raise'
+        Action to perform when duplicates are checked.
+
+        - 'raise':
+        Raise a ValueError if duplicates are detected.
+        If no duplicates are found, nothing is returned.
+        - 'report':
+        Return a dictionary with duplicate summary information.
+        - 'clean':
+        Return a new DataFrame with duplicate rows removed, keeping the first
+        occurrence.
+
+    Returns
+    -------
+    None
+        Returned when `action='raise'` and no duplicates are found.
+
+    dict
+        Returned when `action='report'`. The report contains:
+        - 'subset_used': list of columns used for duplicate detection
+        - 'total_num': number of duplicate rows excluding first occurrences
+        - 'total_pct': percentage of duplicate rows
+
+    pandas.DataFrame
+        Returned when `action='clean'`. Contains duplicate rows removed according
+        to the selected subset and `keep='first'`.
+
+    Raises
+    ------
+    TypeError
+        If `df` is not a pandas DataFrame.
+        If `subset` is not None, str, or list.
+
+    ValueError
+        If `action` is not supported.
+        If `action='raise'` and duplicates are detected.
+
+    Notes
+    -----
+    - Duplicate count excludes the first occurrence of each duplicated row or group.
+    - The input DataFrame is not modified in place.
+    - In report mode, if no duplicates are found, 'total_pct' is set to 0.0.
+    """
+
     SUPPORTED_ACTIONS = ['raise', 'report', 'clean']
     
     if not isinstance(df, pd.DataFrame):
@@ -98,6 +161,13 @@ def handle_duplicates(df, subset=None, action='raise'):
     
     if action not in SUPPORTED_ACTIONS:
         raise ValueError(f"Action not supported. Supported actions: {SUPPORTED_ACTIONS}")
+    
+    if subset is not None and not isinstance(subset, (str, list)):
+        got_type = type(subset).__name__
+        raise TypeError(f'Subset should be None, str or a list. Got: {got_type}')
+
+    if isinstance(subset, str):
+        subset = [subset]
 
     df_mask = df.duplicated(subset=subset, keep='first')
     duplicates_total = df_mask.sum()
@@ -112,6 +182,7 @@ def handle_duplicates(df, subset=None, action='raise'):
             total_pct = duplicates_total / df.shape[0] * 100
 
         report = {
+            'subset_used': subset if subset is not None else df.columns.to_list(),
             'total_num': duplicates_total,
             'total_pct': round(total_pct, 2) if duplicates_total else 0.0
         }
