@@ -169,6 +169,11 @@ def handle_duplicates(df, subset=None, action='raise'):
     if isinstance(subset, str):
         subset = [subset]
 
+    if isinstance(subset, list):
+        wrong_col = [col for col in subset if col not in set(df.columns)]
+        if wrong_col:
+            raise ValueError(f'Column names not in DataFrame: {wrong_col}')
+
     df_mask = df.duplicated(subset=subset, keep='first')
     duplicates_total = df_mask.sum()
 
