@@ -68,7 +68,7 @@ def test_missing_column_string():
     else:
         raise AssertionError("ValueError was not raised for missing column name using string.")    
 
-def test_duplicates_error():
+def test_duplicates_raise_mode_error():
 
     df = pd.DataFrame({
     "id": [1, 2, 2],
@@ -82,6 +82,17 @@ def test_duplicates_error():
     else:
         raise AssertionError("ValueError was not raised for duplicated DataFrame.")
 
+def test_no_duplicates_raise_mode_none():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3],
+    "value": ["A", "B", "C"]
+})
+    
+    df_clean = handle_duplicates(df, action='raise')
+
+    assert df_clean is None
+
 
 # Test 1: TypeError - non-DataFrame input
 test_no_df_input_error()
@@ -94,4 +105,6 @@ test_missing_columns_list()
 # Test 5: ValueError - missing column name using sting
 test_missing_column_string()
 # Test 6: ValueError - duplicated DataFrame
-test_duplicates_error()
+test_duplicates_raise_mode_error()
+# Test 7:
+test_no_duplicates_raise_mode_none()
