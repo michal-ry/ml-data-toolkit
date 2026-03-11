@@ -93,6 +93,88 @@ def test_no_duplicates_raise_mode_none():
 
     assert df_clean is None
 
+def test_is_dictionary_report_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 2],
+    "value": ["A", "B", "B"]
+})
+    
+    report = handle_duplicates(df, action='report')
+
+    assert isinstance(report, dict)
+
+def test_duplicates_report_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 2],
+    "value": ["A", "B", "B"]
+})
+    
+    report = handle_duplicates(df, action='report')
+    
+    assert report['total_num'] > 0
+    assert report['total_pct'] > 0
+
+def test_no_duplicates_report_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3],
+    "value": ["A", "B", "C"]
+})
+    
+    report = handle_duplicates(df, action='report')
+    
+    assert report['total_num'] == 0
+    assert report['total_pct'] == 0.0
+
+def test_expected_values_duplicates_report_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+    
+    report = handle_duplicates(df, action='report')
+
+    assert report['total_num'] == 1
+    assert report['total_pct'] == 25.0
+
+def test_string_subset_report_mode():
+    
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+    
+    report = handle_duplicates(df, action='report', subset='id')
+
+    assert isinstance(report['subset_used'], list)
+    assert report['subset_used'] == ['id']
+
+def test_list_subset_report_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+
+    report = handle_duplicates(df, subset=['id', 'value'], action='report')
+
+    assert isinstance(report['subset_used'], list)
+    assert report['subset_used'] == ['id', 'value']
+
+def test_none_subset_report_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+
+    report = handle_duplicates(df, subset=None, action='report')
+
+    assert isinstance(report['subset_used'], list)
+    assert report['subset_used'] == df.columns.to_list()
 
 # Test 1: TypeError - non-DataFrame input
 test_no_df_input_error()
@@ -106,5 +188,19 @@ test_missing_columns_list()
 test_missing_column_string()
 # Test 6: ValueError - duplicated DataFrame
 test_duplicates_raise_mode_error()
-# Test 7:
+# Test 7 No Duplicates - raise mode:
 test_no_duplicates_raise_mode_none()
+# Test 8: Return dictionary - report mode
+test_is_dictionary_report_mode()
+# Test 9: Duplicates - report mode
+test_duplicates_report_mode()
+# Test 10: No dupicates - report mode
+test_no_duplicates_report_mode()
+# Test 11: Expected values in dictionary with duploicates - report mode
+test_expected_values_duplicates_report_mode()
+# Tet 12: Subset string - report mode
+test_string_subset_report_mode()
+# Test 13: Subset list - report mode
+test_list_subset_report_mode()
+# Test 14: Subset None - report mode
+test_none_subset_report_mode()
