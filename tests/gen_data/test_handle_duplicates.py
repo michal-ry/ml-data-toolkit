@@ -176,6 +176,54 @@ def test_none_subset_report_mode():
     assert isinstance(report['subset_used'], list)
     assert report['subset_used'] == df.columns.to_list()
 
+def test_return_clean_df_clean_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+
+    clean_df = handle_duplicates(df, action='clean')
+    expected_df = df.drop_duplicates(keep="first")
+
+    assert isinstance(clean_df, pd.DataFrame)
+    assert clean_df.shape == expected_df.shape
+    assert clean_df.equals(expected_df)
+
+def test_keep_first_clean_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+    expected_index = [0, 1, 2]
+    clean_df = handle_duplicates(df, action='clean')
+    
+    assert clean_df.index.to_list() == expected_index
+
+def test_original_df_unchanged_clean_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3, 1],
+    "value": ["A", "B", "C", "A"]
+})
+
+    df_before = df.copy()
+    clean_df = handle_duplicates(df, action='clean')
+
+    assert df.equals(df_before)
+
+def test_no_duplicates_clean_mode():
+
+    df = pd.DataFrame({
+    "id": [1, 2, 3],
+    "value": ["A", "B", "C"]
+})
+    
+    clean_df = handle_duplicates(df, action='clean')
+
+    assert clean_df.equals(df)
+
 # Test 1: TypeError - non-DataFrame input
 test_no_df_input_error()
 # Test 2: ValueError - invalid action input
@@ -204,3 +252,11 @@ test_string_subset_report_mode()
 test_list_subset_report_mode()
 # Test 14: Subset None - report mode
 test_none_subset_report_mode()
+# test 15: Return clean df - clean mode
+test_return_clean_df_clean_mode()
+# Test 16: keep firt - clean mode
+test_keep_first_clean_mode()
+# Test 17: Original df unchanged - clean mode
+test_original_df_unchanged_clean_mode()
+# Test 18: No duplicates - clean mode
+test_no_duplicates_clean_mode()
