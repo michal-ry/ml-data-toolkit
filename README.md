@@ -1,7 +1,7 @@
 # ML Data Toolkit
 
 <p align="center">
-  <img src="assets/ml-data-toolkit-cover.png" width="700">
+  <img src="assets/ml-data-toolkit-cover.png" width="800">
 </p>
 
 Reusable Python toolkit for data preprocessing, analysis, and machine learning workflows.
