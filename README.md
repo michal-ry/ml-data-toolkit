@@ -9,6 +9,12 @@ This project is currently under active development.
 ## ✅ Current Implementation
 
 - Column name normalization and validation function implemented with input validation and test coverage
+- Duplicate handling and reporting function implemented with input validation and test coverage
+
+## 🔜 Next Steps
+
+- Add missing value handling function
+- Migrate tests to pytest
 
 ## 📦 Planned Modules
 
