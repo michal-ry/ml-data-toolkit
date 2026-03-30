@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 from data_toolkit.cleaning import clean_columns 
 
 def report(df):
@@ -171,12 +172,8 @@ def test_non_df_input_error():
 
     data = [1, 2, 3]
 
-    try:
+    with pytest.raises(TypeError):
         clean_columns(data)
-    except TypeError:
-        pass
-    else:
-        raise AssertionError('TypeError was not raised for non-DataFrame input')
 
 def test_invalid_deal_dups_argument():
 
@@ -189,12 +186,8 @@ def test_invalid_deal_dups_argument():
     
     df = pd.DataFrame(data)
 
-    try:
+    with pytest.raises(ValueError):
         clean_columns(df, deal_dups='keep')
-    except ValueError:
-        pass
-    else:
-        raise AssertionError('ValueError was not raised for invalid deal_dups argument')
 
 def test_duplicates_with_raise_argument():
 
@@ -207,24 +200,5 @@ def test_duplicates_with_raise_argument():
     
     df = pd.DataFrame(data)
 
-    try:
+    with pytest.raises(ValueError):
         clean_columns(df, deal_dups='raise')
-    except ValueError:
-        pass
-    else:
-        raise AssertionError('ValueError was not raised for duplicate names.')
-
-# Test 1: messy column names, no duplicates
-test_messy_no_duplicates()
-# Test 2: simple duplicates columns - rename mode
-test_simple_duplicates_rename()
-# Test 3: duplicates with collision - rename mode
-test_duplicate_collision_rename()
-# Test 4: non-string values
-test_non_string_column_names()
-# Test 5: TypeError: non-DataFrame input
-test_non_df_input_error()
-# Test 6: ValueError: invalid deal_dups argument
-test_invalid_deal_dups_argument()
-# Test 7: ValueError: duplicates detection - raise mode
-test_duplicates_with_raise_argument()
