@@ -12,13 +12,20 @@ This project is currently under active development.
 
 ## ✅ Current Implementation
 
-- Column name normalization and validation function implemented with input validation and test coverage
-- Duplicate handling and reporting function implemented with input validation and test coverage
+### data_toolkit
+
+- Column name normalization and validation function implemented 
+- Duplicate handling and reporting function implemented
+
+### testing
+
+- Test suite migrated to pytest (clean_columns, handle_duplicates)
 
 ## 🔜 Next Steps
 
+- ## Next Steps
+- Add usage examples for `clean_columns` and `handle_duplicates`
 - Add missing value handling function
-- Migrate tests to pytest
 
 ## 📦 Planned Modules
 
