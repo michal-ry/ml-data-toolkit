@@ -1,16 +1,13 @@
 import pandas as pd
+import pytest
 from data_toolkit.cleaning import handle_duplicates
 
 def test_no_df_input_error():
 
     data = [1, 2, 3]
 
-    try:
+    with pytest.raises(TypeError):
         handle_duplicates(data)
-    except TypeError:
-        pass
-    else:
-        raise AssertionError('TypeError was not raised for non-DataFrame input')
 
 def test_invalid_action_input():
 
@@ -18,13 +15,9 @@ def test_invalid_action_input():
     "id": [1, 2, 3],
     "value": ["A", "B", "C"]
 })
-
-    try:
+    
+    with pytest.raises(ValueError):
         handle_duplicates(df, action='drop')
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("ValueError was not raised for invalid action.")
     
 def test_invalid_subset_input():
 
@@ -33,12 +26,8 @@ def test_invalid_subset_input():
     "value": ["A", "B", "C"]
 })
     
-    try:
+    with pytest.raises(TypeError):
         handle_duplicates(df, subset=('id','value'))
-    except TypeError:
-        pass
-    else:
-        raise AssertionError("TypeError was not raised for invalid subset.")
 
 def test_missing_columns_list():
 
@@ -47,12 +36,8 @@ def test_missing_columns_list():
     "value": ["A", "B", "C"]
 })
     
-    try:
+    with pytest.raises(ValueError):
         handle_duplicates(df, subset=['id', 'name'])
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("ValueError was not raised for missing column names using list.")
     
 def test_missing_column_string():
 
@@ -60,13 +45,9 @@ def test_missing_column_string():
     "id": [1, 2, 3],
     "value": ["A", "B", "C"]
 })
-
-    try:
-        handle_duplicates(df, subset='name')
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("ValueError was not raised for missing column name using string.")    
+    
+    with pytest.raises(ValueError):
+        handle_duplicates(df, subset='name')  
 
 def test_duplicates_raise_mode_error():
 
@@ -75,12 +56,8 @@ def test_duplicates_raise_mode_error():
     "value": ["A", "B", "B"]
 })
     
-    try:
+    with pytest.raises(ValueError):
         handle_duplicates(df, action='raise')
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("ValueError was not raised for duplicated DataFrame.")
 
 def test_no_duplicates_raise_mode_none():
 
@@ -223,40 +200,3 @@ def test_no_duplicates_clean_mode():
     clean_df = handle_duplicates(df, action='clean')
 
     assert clean_df.equals(df)
-
-# Test 1: TypeError - non-DataFrame input
-test_no_df_input_error()
-# Test 2: ValueError - invalid action input
-test_invalid_action_input()
-# Test 3: TypeError - invalid subset input
-test_invalid_subset_input()
-# Test 4: ValueError - missing column using list
-test_missing_columns_list()
-# Test 5: ValueError - missing column name using sting
-test_missing_column_string()
-# Test 6: ValueError - duplicated DataFrame
-test_duplicates_raise_mode_error()
-# Test 7 No Duplicates - raise mode:
-test_no_duplicates_raise_mode_none()
-# Test 8: Return dictionary - report mode
-test_is_dictionary_report_mode()
-# Test 9: Duplicates - report mode
-test_duplicates_report_mode()
-# Test 10: No dupicates - report mode
-test_no_duplicates_report_mode()
-# Test 11: Expected values in dictionary with duploicates - report mode
-test_expected_values_duplicates_report_mode()
-# Tet 12: Subset string - report mode
-test_string_subset_report_mode()
-# Test 13: Subset list - report mode
-test_list_subset_report_mode()
-# Test 14: Subset None - report mode
-test_none_subset_report_mode()
-# test 15: Return clean df - clean mode
-test_return_clean_df_clean_mode()
-# Test 16: keep firt - clean mode
-test_keep_first_clean_mode()
-# Test 17: Original df unchanged - clean mode
-test_original_df_unchanged_clean_mode()
-# Test 18: No duplicates - clean mode
-test_no_duplicates_clean_mode()
