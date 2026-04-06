@@ -197,3 +197,26 @@ def handle_duplicates(df, subset=None, action='raise'):
     else:
         df_clean = df.drop_duplicates(subset=subset, keep='first')
         return df_clean
+
+def report_nan(df, target=None):
+
+    '''
+    Space for informations.
+    Will be edited at the end.
+    '''
+
+    if not isinstance(df, pd.DataFrame):
+        got_type = type(df).__name__
+        raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
+    
+    if target is not None:
+
+        if not isinstance(target, str):
+            got_type = type(target).__name__
+            raise TypeError(f'Target must be a string. Got: {got_type}')
+        
+        if not target.strip():
+            raise ValueError('Target column cannot be an empty string.')
+        
+        if target not in df.columns:
+            raise ValueError(f'Target column not in DataFrame.\nAvailable columns: {df.columns.to_list()}')
