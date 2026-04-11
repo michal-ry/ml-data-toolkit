@@ -200,14 +200,86 @@ def handle_duplicates(df, subset=None, action='raise'):
 
 def report_nan(df, target=None):
 
-    '''
-    Space for informations.
-    Will be edited at the end.
-    '''
+    """
+    Generate a report of missing values in a pandas DataFrame.
+
+    This function returns a dictionary summarizing missing values across the DataFrame.
+    The report always includes:
+    - the total number of missing values in the DataFrame
+    - a list of feature columns containing missing values
+
+    If a target column is provided, it is reported separately in a dedicated "target" section
+    and excluded from the "columns_with_nan" list.
+
+    For each feature column with missing values, the report includes:
+    - total number of missing values
+    - percentage of missing values
+
+    If the target column is provided, the target section includes:
+    - target column name
+    - total number of missing values in the target column
+    - percentage of missing values in the target column
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame to analyze.
+
+    target : str, optional
+        Name of the target column. Must be a non-empty string and must exist in the DataFrame.
+        If provided, the target column is reported separately.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the missing values report.
+
+    Raises
+    ------
+    TypeError
+        If `df` is not a pandas DataFrame.
+        If `target` is provided and is not a string.
+
+    ValueError
+        If the DataFrame has no rows.
+        If `target` is an empty or whitespace-only string.
+        If `target` is not found in the DataFrame columns.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> df = pd.DataFrame({
+    ...     "A": [1, np.nan, 3],
+    ...     "B": [1, 2, np.nan],
+    ...     "target": [1, 0, np.nan]
+    ... })
+    >>> report_nan(df, target="target")
+    {
+        'total_nan': 3,
+        'columns_with_nan': ['A', 'B'],
+        'target': {
+            'column_name': 'target',
+            'nan_total': 1,
+            'nan_pct': 33.33333333333333
+        },
+        'A': {
+            'nan_total': 1,
+            'nan_pct': 33.33333333333333
+        },
+        'B': {
+            'nan_total': 1,
+            'nan_pct': 33.33333333333333
+        }
+    }
+    """
 
     if not isinstance(df, pd.DataFrame):
         got_type = type(df).__name__
         raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
+    
+    if df.shape[0] == 0:
+        raise ValueError('DataFrame must contain at least one row.')
     
     if target is not None:
 
@@ -220,3 +292,33 @@ def report_nan(df, target=None):
         
         if target not in df.columns:
             raise ValueError(f'Target column not in DataFrame.\nAvailable columns: {df.columns.to_list()}')
+
+    total_rows = df.shape[0]
+    nan_per_col = df.isnull().sum()
+    total_nan = nan_per_col.sum()
+    columns_with_nan = nan_per_col.loc[nan_per_col > 0].index.to_list()
+    if target is not None and target in columns_with_nan:
+        columns_with_nan = [col for col in columns_with_nan if col != target]
+    nan_pct = nan_per_col / total_rows * 100
+
+    report = {
+            'total_nan': total_nan,
+            'columns_with_nan': columns_with_nan,
+        }
+    
+    if target is not None:
+
+        report['target'] = {
+            'column_name': target,
+            'nan_total': nan_per_col[target],
+            'nan_pct': nan_pct[target],
+        }
+    
+    if total_nan:
+        for col in columns_with_nan:
+            report[col] = {
+                'nan_total': nan_per_col[col],
+                'nan_pct': nan_pct[col]
+                }
+                
+    return report
