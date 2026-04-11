@@ -14,18 +14,20 @@ This project is currently under active development.
 
 ### data_toolkit
 
-- Column name normalization and validation function implemented 
-- Duplicate handling and reporting function implemented
+- Implemented column name normalization and validation (`clean_columns`)
+- Implemented duplicate handling and reporting (`handle_duplicates`)
+- Implemented missing values report (`report_nan`)
 
 ### testing
 
-- Test suite migrated to pytest (clean_columns, handle_duplicates)
+- Migrated test suite to pytest (`clean_columns`, `handle_duplicates`)
+- Added tests for `report_nan`
 
 ## 🔜 Next Steps
 
-- ## Next Steps
-- Add usage examples for `clean_columns` and `handle_duplicates`
+- Add usage examples for `clean_columns`, `handle_duplicates` and `report_nan`
 - Add missing value handling function
+- Add pytest `match` assertions for error message validation
 
 ## 📦 Planned Modules
 
