@@ -17,16 +17,17 @@ This project is currently under active development.
 - Implemented column name normalization and validation (`clean_columns`)
 - Implemented duplicate handling and reporting (`handle_duplicates`)
 - Implemented missing values report (`report_nan`)
+- Implemented target NaN dropping (`drop_nan_target`)
 
 ### testing
 
 - Migrated test suite to pytest (`clean_columns`, `handle_duplicates`)
 - Added tests for `report_nan`
+- Added tests for `drop_nan_target`
 
 ## 🔜 Next Steps
 
-- Add usage examples for `clean_columns`, `handle_duplicates` and `report_nan`
-- Add missing value handling function
+- Add usage examples for `clean_columns`, `handle_duplicates`, `report_nan`, `drop_nan_target`
 - Add pytest `match` assertions for error message validation
 
 ## 📦 Planned Modules
