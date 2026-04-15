@@ -78,3 +78,68 @@ def test_target_not_in_df_error():
 
     with pytest.raises(ValueError, match=re.escape(expected_message)):
         drop_nan_target(df, target=target)
+
+def test_target_without_nan():
+
+    df = pd.DataFrame({
+    'T': [1, 2, 3, 4],
+    'A': [1, 2, 3, 4],
+    'B': [1, 2, 3, 4]
+})
+    
+    df_clean = drop_nan_target(df, target='T')
+
+    assert df_clean.equals(df)
+    assert df_clean is not df
+
+def test_target_with_nan():
+
+    df = pd.DataFrame({
+        'T': [1, 2, np.nan, np.nan],
+        'A': [1, 2, 3, 4],
+        'B': [1, 2, 3, 4]
+})
+    
+    expected_df = pd.DataFrame({
+        'T': [1.0, 2.0],
+        'A': [1, 2],
+        'B': [1, 2]
+    })
+
+    df_clean = drop_nan_target(df, target='T')
+
+    assert df_clean.equals(expected_df)
+    assert df_clean is not df
+
+def test_other_columns_with_nan():
+
+    df = pd.DataFrame({
+        'T': [1, 2, 3, 4],
+        'A': [1, np.nan, 3, 4],
+        'B': [1, 2, np.nan, 4]
+})
+    
+    expected_df = pd.DataFrame({
+        'T': [1, 2, 3, 4],
+        'A': [1.0, np.nan, 3.0, 4.0],
+        'B': [1.0, 2.0, np.nan, 4.0]
+})
+    
+    df_clean = drop_nan_target(df, target='T')
+
+    assert df_clean.equals(expected_df)
+    assert df_clean is not df
+
+def test_target_all_nan():
+
+    df = pd.DataFrame({
+        'T': [np.nan, np.nan, np.nan, np.nan],
+        'A': [1, 2, 3, 4],
+        'B': [1, 2, 3, 4]
+})
+
+    df_clean = drop_nan_target(df, target='T')
+
+    assert df_clean.empty
+    assert df_clean.columns.tolist() == ['T', 'A', 'B']
+    assert df_clean is not df

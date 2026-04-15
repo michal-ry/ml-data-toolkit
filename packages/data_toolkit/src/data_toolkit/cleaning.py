@@ -325,6 +325,62 @@ def report_nan(df, target=None):
 
 def drop_nan_target(df, target):
 
+    """
+    Remove rows with missing values in the target column.
+
+    This function is designed for supervised machine learning workflows where
+    rows with missing target values should be excluded before model training.
+
+    The function validates the input DataFrame and target column, then returns
+    a new DataFrame with all rows containing missing values in the target column
+    removed. Missing values in other columns are left unchanged.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame to clean.
+
+    target : str
+        Name of the target column. Must be a non-empty string and must exist
+        in the DataFrame.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A new DataFrame with rows containing missing values in the target
+        column removed.
+
+    Raises
+    ------
+    TypeError
+        If `df` is not a pandas DataFrame.
+        If `target` is not a string.
+
+    ValueError
+        If the DataFrame has no rows.
+        If `target` is an empty or whitespace-only string.
+        If `target` is not found in the DataFrame columns.
+
+    Notes
+    -----
+    This function is intended specifically for handling missing values in the
+    target column. It does not fill missing values and does not modify the
+    original DataFrame.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> df = pd.DataFrame({
+    ...     "feature": [10, 20, 30],
+    ...     "target": [1, np.nan, 0]
+    ... })
+    >>> drop_nan_target(df, target="target")
+       feature  target
+    0       10     1.0
+    2       30     0.0
+    """
+
     if not isinstance(df, pd.DataFrame):
         got_type = type(df).__name__
         raise TypeError(f'Expected a pandas DataFrame. Got: {got_type}')
@@ -342,3 +398,6 @@ def drop_nan_target(df, target):
     if target not in df.columns:
         raise ValueError(f'Target column not in DataFrame.\nAvailable columns: {df.columns.to_list()}')
 
+    df_clean = df.dropna(subset=[target]).copy()
+
+    return df_clean
