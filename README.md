@@ -25,6 +25,10 @@ This project is currently under active development.
 - Added tests for `report_nan`
 - Added tests for `drop_nan_target`
 
+### examples
+
+- Add usage example for `clean_columns`
+
 ## 🔜 Next Steps
 
 - Add usage examples for `clean_columns`, `handle_duplicates`, `report_nan`, `drop_nan_target`
