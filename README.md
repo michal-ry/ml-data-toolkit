@@ -28,10 +28,11 @@ This project is currently under active development.
 ### examples
 
 - Add usage example for `clean_columns`
+- Add usage example for `handle_duplicates`
 
 ## 🔜 Next Steps
 
-- Add usage examples for `clean_columns`, `handle_duplicates`, `report_nan`, `drop_nan_target`
+- Add usage examples for `report_nan`, `drop_nan_target`
 - Add pytest `match` assertions for error message validation
 
 ## 📦 Planned Modules
